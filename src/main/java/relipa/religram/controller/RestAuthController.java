@@ -33,4 +33,9 @@ public class RestAuthController {
     public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest) {
         return userService.getLoginResponse(loginRequest);
     }
+
+    @PostMapping("/login/facebook")
+    public LoginResponse loginFb(@RequestBody LoginFBRequest loginFbRequest) {
+        return userService.getLoginFbResponse(loginFbRequest);
+    }
 }
