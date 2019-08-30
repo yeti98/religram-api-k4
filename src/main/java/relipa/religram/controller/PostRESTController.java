@@ -2,11 +2,10 @@ package relipa.religram.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import relipa.religram.dto.CommentModel;
 import relipa.religram.dto.PostModel;
+import relipa.religram.entity.Comment;
 import relipa.religram.entity.Post;
 import relipa.religram.model.PagingResponse;
 import relipa.religram.service.PostService;
@@ -27,5 +26,13 @@ public class PostRESTController {
         int totalPages = result.getTotalPages();
         List<PostModel> posts = result.stream().map(Entity2DTO::toPostModel).collect(Collectors.toList());
         return new PagingResponse(totalPages, posts);
+    }
+
+    @GetMapping("/post/{id}/comment")
+    public PagingResponse getCommentsByPostId(@PathVariable("id") String postId, @RequestParam("page") String page) {
+        Page<Comment> result = postService.getCommentsByPage(Integer.valueOf(postId), Integer.valueOf(page));
+        int totalPage = result.getTotalPages();
+        List<CommentModel> comments = result.stream().map(Entity2DTO::toCommentModel).collect(Collectors.toList());
+        return new PagingResponse(totalPage, comments);
     }
 }
