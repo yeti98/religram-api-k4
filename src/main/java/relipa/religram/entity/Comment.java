@@ -1,20 +1,15 @@
 package relipa.religram.entity;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
-
+@Data
+@NoArgsConstructor
 @Entity
 public class Comment {
 
@@ -36,65 +31,10 @@ public class Comment {
 
     @ManyToMany
     @JoinTable(name = "hashtag_comment", joinColumns = @JoinColumn(name = "comment_id"), inverseJoinColumns = @JoinColumn(name = "hashtag_id"))
-    private List<Comment> hashtags;
+    private List<Hashtag> hashtags;
 
     @OneToMany(mappedBy = "comment")
     private List<Mention> mentions;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public LocalDateTime getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(LocalDateTime createAt) {
-        this.createAt = createAt;
-    }
-
-    public LocalDateTime getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(LocalDateTime updateAt) {
-        this.updateAt = updateAt;
-    }
-
-    public List<Comment> getHashtags() {
-        return hashtags;
-    }
-
-    public void setHashtags(List<Comment> hashtags) {
-        this.hashtags = hashtags;
-    }
-
-    public List<Mention> getMentions() {
-        return mentions;
-    }
-
-    public void setMentions(List<Mention> mentions) {
-        this.mentions = mentions;
-    }
 
 }
