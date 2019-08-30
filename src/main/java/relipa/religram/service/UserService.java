@@ -1,5 +1,8 @@
 package relipa.religram.service;
 
+import javax.servlet.http.HttpServletRequest;
+
+import relipa.religram.model.ChangePassRequest;
 import relipa.religram.model.LoginFBRequest;
 import relipa.religram.model.LoginRequest;
 import relipa.religram.model.LoginResponse;
@@ -11,4 +14,6 @@ public interface UserService {
     public LoginResponse getLoginResponse(LoginRequest loginRequest);
 
     public LoginResponse getLoginFbResponse(LoginFBRequest loginFBRequest);
+
+    public void changePassword(HttpServletRequest httpServlet, ChangePassRequest request);
 }
