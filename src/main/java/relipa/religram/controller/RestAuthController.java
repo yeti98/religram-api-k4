@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RestController;
 import relipa.religram.custom_repository.UserRepository;
 import relipa.religram.model.*;
 import relipa.religram.service.JwtService;
-import relipa.religram.service.UserServiceImpl;
+import relipa.religram.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
 public class RestAuthController {
 
     @Autowired
-    UserServiceImpl userServiceImpl;
+    UserService userService;
 
     @Autowired
     UserRepository userRepository;
@@ -26,7 +26,11 @@ public class RestAuthController {
 
     @PostMapping("/signup")
     public LoginResponse signup(@Valid @RequestBody SignupRequest signupRequest) {
-        return userServiceImpl.getSignupResponse(signupRequest);
+        return userService.getSignupResponse(signupRequest);
     }
 
+    @PostMapping("/login")
+    public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest) {
+        return userService.getLoginResponse(loginRequest);
+    }
 }
