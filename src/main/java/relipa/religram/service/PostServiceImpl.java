@@ -7,11 +7,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import relipa.religram.custom_repository.CommentRepository;
 import relipa.religram.custom_repository.PostRepository;
 import relipa.religram.entity.Comment;
+import relipa.religram.entity.Like;
 import relipa.religram.entity.Post;
+import relipa.religram.entity.User;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -22,6 +28,8 @@ public class PostServiceImpl implements PostService {
     private PostRepository postRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private UserService userService;
     @Value("${app.properties.default_post_per_page}")
     private Integer PostPerPage;
     @Value("${app.properties.default_comment_per_page}")
@@ -50,5 +58,33 @@ public class PostServiceImpl implements PostService {
             }
         }
         return post.get();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void changeLikeState(Integer postId) {
+        Post post = getPostById(postId);
+        List<Like> likes = post.getLikes();
+        if (likes == null) likes = new ArrayList<>();
+        User currentUser = userService.getCurrentUser();
+        boolean isCurrentUserLiked = false;
+        Like temp = null;
+        for (Like like : likes) {
+            if (like.getUser().getId() == currentUser.getId()) {
+                isCurrentUserLiked = true;
+                temp = like;
+                break;
+            }
+        }
+        if (!isCurrentUserLiked) {
+            if (!post.isLiked()) post.setLiked(true);
+            Like like = new Like(userService.getCurrentUser(), LocalDateTime.now());
+            likes.add(like);
+        } else {
+            likes.remove(temp);
+            if (likes.size() == 0) post.setLiked(false);
+            post.setLikes(likes);
+        }
+        postRepository.save(post);
     }
 }

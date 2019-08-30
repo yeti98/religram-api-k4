@@ -1,14 +1,12 @@
 package relipa.religram.service;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.Version;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,18 +14,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import relipa.religram.configer.security.CustomUserDetails;
 import relipa.religram.custom_repository.UserRepository;
 import relipa.religram.entity.User;
+import relipa.religram.exceptionhandle.ApiMissingException;
 import relipa.religram.exceptionhandle.EmailIsAlreadyTakenException;
 import relipa.religram.exceptionhandle.UsernameIsAlreadyTakenException;
-import relipa.religram.model.LoginRequest;
-import relipa.religram.model.LoginResponse;
-import relipa.religram.model.ChangePassRequest;
-import relipa.religram.model.LoginFBRequest;
-import relipa.religram.model.SignupRequest;
-import relipa.religram.model.UserModel;
+import relipa.religram.model.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -136,6 +131,15 @@ public class UserServiceImpl implements UserService {
             String subject = "Reset password religram";
             mailService.sendMail(email, subject, context);
         }
+    }
+
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            throw new ApiMissingException();
+        }
+        CustomUserDetails cusUser = (CustomUserDetails) authentication.getPrincipal();
+        return cusUser.getUser();
     }
 
     @Override

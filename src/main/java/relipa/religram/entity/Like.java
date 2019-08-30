@@ -1,22 +1,16 @@
 package relipa.religram.entity;
 
-import java.time.LocalDateTime;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
 @NoArgsConstructor
+@Table(name = "LikeOfUser")
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +22,9 @@ public class Like {
     private User user;
 
     private LocalDateTime timeStamp;
+
+    public Like(@NotNull User user, LocalDateTime timeStamp) {
+        this.user = user;
+        this.timeStamp = timeStamp;
+    }
 }

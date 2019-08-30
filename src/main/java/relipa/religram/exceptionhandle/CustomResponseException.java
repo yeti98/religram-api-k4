@@ -1,9 +1,5 @@
 package relipa.religram.exceptionhandle;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,6 +13,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @ControllerAdvice
 @RestController
@@ -34,7 +34,7 @@ public class CustomResponseException extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-            HttpHeaders headers, HttpStatus status, WebRequest request) {
+                                                                  HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         List<HashMap<String, String>> message = convertToMessage(ex.getBindingResult().getFieldErrors());
 
@@ -44,7 +44,7 @@ public class CustomResponseException extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UsernameIsAlreadyTakenException.class)
     public final ResponseEntity<Object> handleUsernameIsAlreadyTakenException(UsernameIsAlreadyTakenException ex,
-            WebRequest request) {
+                                                                              WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
@@ -65,7 +65,7 @@ public class CustomResponseException extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EmailIsAlreadyTakenException.class)
     public final ResponseEntity<Object> handleEmailIsAlreadyTakenException(EmailIsAlreadyTakenException ex,
-            WebRequest request) {
+                                                                           WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
@@ -81,4 +81,9 @@ public class CustomResponseException extends ResponseEntityExceptionHandler {
         return message;
     }
 
+    @ExceptionHandler(ApiMissingException.class)
+    public final ResponseEntity<Object> handleApiMissingException(ApiMissingException ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
+    }
 }
