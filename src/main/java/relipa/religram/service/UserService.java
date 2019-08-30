@@ -7,6 +7,7 @@ import relipa.religram.model.LoginFBRequest;
 import relipa.religram.model.LoginRequest;
 import relipa.religram.model.LoginResponse;
 import relipa.religram.model.SignupRequest;
+import relipa.religram.model.UserModel;
 
 public interface UserService {
     public LoginResponse getSignupResponse(SignupRequest signupRequest);
@@ -18,4 +19,7 @@ public interface UserService {
     public void changePassword(HttpServletRequest httpServlet, ChangePassRequest request);
 
     public void resetPassword(String email);
+
+    public UserModel getUserById(int id);
+
 }
