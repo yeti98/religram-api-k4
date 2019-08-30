@@ -45,4 +45,9 @@ public class RestAuthController {
             @Valid @RequestBody ChangePassRequest changePassRequest) {
         userService.changePassword(httpRequest, changePassRequest);
     }
+
+    @PostMapping("/resetpassword")
+    public void resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
+        userService.resetPassword(resetPasswordRequest.getEmail());
+    }
 }

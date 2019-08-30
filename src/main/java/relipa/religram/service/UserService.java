@@ -16,4 +16,6 @@ public interface UserService {
     public LoginResponse getLoginFbResponse(LoginFBRequest loginFBRequest);
 
     public void changePassword(HttpServletRequest httpServlet, ChangePassRequest request);
+
+    public void resetPassword(String email);
 }

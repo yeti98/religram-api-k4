@@ -47,6 +47,9 @@ public class UserServiceImpl implements UserService {
     @Value("${app_secret}")
     private String appSecret;
 
+    @Autowired
+    private MailService mailService;
+
     @Override
     public LoginResponse getSignupResponse(SignupRequest signupRequest) {
         User userCheck = userRepository.findByUsername(signupRequest.getUsername());
@@ -119,6 +122,19 @@ public class UserServiceImpl implements UserService {
         if (authentication.isAuthenticated()) {
             user.setPassword(passwordEncoder.encode(request.getNewPassword()));
             userRepository.save(user);
+        }
+    }
+
+    @Override
+    public void resetPassword(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null)
+            throw new RuntimeException("Email doesn't exist");
+        else {
+            String jwt = jwtService.generateToken(new CustomUserDetails(user));
+            String context = "http://localhost:8082/api/v1/auth/verify/" + jwt;
+            String subject = "Reset password religram";
+            mailService.sendMail(email, subject, context);
         }
     }
 }
