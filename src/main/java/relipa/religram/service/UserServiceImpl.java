@@ -141,4 +141,17 @@ public class UserServiceImpl implements UserService {
         CustomUserDetails cusUser = (CustomUserDetails) authentication.getPrincipal();
         return cusUser.getUser();
     }
+
+    @Override
+    public UserModel getUserById(int id) {
+        CustomUserDetails cusUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        User user = cusUser.getUser();
+        if (user == null)
+            throw new RuntimeException("API not found or invalid");
+        user = userRepository.findById(id).get();
+        if (user == null)
+            throw new RuntimeException("User not found");
+        return new UserModel(user.getId(), user.getUsername(), user.getFullname(), user.getEmail(), user.getAvatar());
+    }
 }
