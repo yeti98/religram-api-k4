@@ -12,4 +12,6 @@ public interface PostService {
     Page<Comment> getCommentsByPage(Integer postId, Integer page);
 
     Post getPostById(Integer postId);
+
+    void changeLikeState(Integer postId);
 }

@@ -11,6 +11,7 @@ import relipa.religram.model.PagingResponse;
 import relipa.religram.service.PostService;
 import utils.Entity2DTO;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,5 +35,10 @@ public class PostRESTController {
         int totalPage = result.getTotalPages();
         List<CommentModel> comments = result.stream().map(Entity2DTO::toCommentModel).collect(Collectors.toList());
         return new PagingResponse(totalPage, comments);
+    }
+
+    @PostMapping("/post/{id}/like")
+    public void like_unlike(@Valid @PathVariable("id") String postId) {
+        postService.changeLikeState(Integer.valueOf(postId));
     }
 }
