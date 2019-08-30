@@ -1,5 +1,7 @@
 package relipa.religram.service;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
@@ -13,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import relipa.religram.configer.security.CustomUserDetails;
 import relipa.religram.custom_repository.UserRepository;
 import relipa.religram.entity.User;
@@ -20,6 +24,7 @@ import relipa.religram.exceptionhandle.EmailIsAlreadyTakenException;
 import relipa.religram.exceptionhandle.UsernameIsAlreadyTakenException;
 import relipa.religram.model.LoginRequest;
 import relipa.religram.model.LoginResponse;
+import relipa.religram.model.ChangePassRequest;
 import relipa.religram.model.LoginFBRequest;
 import relipa.religram.model.SignupRequest;
 import relipa.religram.model.UserModel;
@@ -97,4 +102,23 @@ public class UserServiceImpl implements UserService {
         return loginResponse;
     }
 
+    @Override
+    public void changePassword(HttpServletRequest httpServlet, ChangePassRequest request) {
+        String token = httpServlet.getHeader("Authorization");
+        if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        } else
+            throw new RuntimeException("Api is invalid");
+        CustomUserDetails cusUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        User user = cusUser.getUser();
+        if (user == null)
+            throw new RuntimeException("Api is invalid");
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUsername(), request.getCurrentPassword()));
+        if (authentication.isAuthenticated()) {
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            userRepository.save(user);
+        }
+    }
 }

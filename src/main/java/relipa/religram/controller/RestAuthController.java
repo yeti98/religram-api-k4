@@ -1,5 +1,6 @@
 package relipa.religram.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,5 +38,11 @@ public class RestAuthController {
     @PostMapping("/login/facebook")
     public LoginResponse loginFb(@RequestBody LoginFBRequest loginFbRequest) {
         return userService.getLoginFbResponse(loginFbRequest);
+    }
+
+    @PostMapping("/changepassword")
+    public void changePassword(HttpServletRequest httpRequest,
+            @Valid @RequestBody ChangePassRequest changePassRequest) {
+        userService.changePassword(httpRequest, changePassRequest);
     }
 }
