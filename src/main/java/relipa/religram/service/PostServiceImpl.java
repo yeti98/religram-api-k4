@@ -10,10 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import relipa.religram.custom_repository.CommentRepository;
 import relipa.religram.custom_repository.PostRepository;
-import relipa.religram.entity.Comment;
-import relipa.religram.entity.Like;
-import relipa.religram.entity.Post;
-import relipa.religram.entity.User;
+import relipa.religram.entity.*;
+import relipa.religram.model.CommentRequest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,6 +28,8 @@ public class PostServiceImpl implements PostService {
     private CommentRepository commentRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private HashtagServiceImpl hashtagService;
     @Value("${app.properties.default_post_per_page}")
     private Integer PostPerPage;
     @Value("${app.properties.default_comment_per_page}")
@@ -85,6 +85,24 @@ public class PostServiceImpl implements PostService {
             if (likes.size() == 0) post.setLiked(false);
             post.setLikes(likes);
         }
+        postRepository.save(post);
+    }
+
+    @Override
+    public void saveNewComment(Integer postId, CommentRequest commentRequest) {
+        Post post = getPostById(postId);
+        User user = userService.getCurrentUser();
+        String content = commentRequest.getComment();
+        hashtagService.saveNewHashtag(commentRequest.getHashtags());
+        List<Hashtag> hashtags = hashtagService.findByHashtag(commentRequest.getHashtags());
+        Comment comment = new Comment();
+        comment.setContent(content);
+        comment.setCreateAt(LocalDateTime.now());
+        comment.setUpdateAt(LocalDateTime.now());
+        comment.setHashtags(hashtags);
+        comment.setUser(user);
+        commentRepository.save(comment);
+        post.getComments().add(comment);
         postRepository.save(post);
     }
 }
