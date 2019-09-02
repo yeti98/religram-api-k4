@@ -41,4 +41,10 @@ public class PostRESTController {
     public void like_unlike(@Valid @PathVariable("id") String postId) {
         postService.changeLikeState(Integer.valueOf(postId));
     }
+
+    @PostMapping("/post/{id}/comment")
+    public void postComment(@Valid @PathVariable("id") String postId,
+                            @Valid @RequestBody CommentRequest commentRequest) {
+        postService.saveNewComment(Integer.valueOf(postId), commentRequest);
+    }
 }
