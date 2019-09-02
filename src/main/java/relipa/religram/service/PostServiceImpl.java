@@ -12,12 +12,14 @@ import relipa.religram.custom_repository.CommentRepository;
 import relipa.religram.custom_repository.PostRepository;
 import relipa.religram.entity.*;
 import relipa.religram.model.CommentRequest;
+import relipa.religram.model.PostRequest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -30,6 +32,8 @@ public class PostServiceImpl implements PostService {
     private UserService userService;
     @Autowired
     private HashtagServiceImpl hashtagService;
+    @Autowired
+    private PhotoServiceImpl photoService;
     @Value("${app.properties.default_post_per_page}")
     private Integer PostPerPage;
     @Value("${app.properties.default_comment_per_page}")
@@ -103,6 +107,28 @@ public class PostServiceImpl implements PostService {
         comment.setUser(user);
         commentRepository.save(comment);
         post.getComments().add(comment);
+        postRepository.save(post);
+    }
+
+    @Override
+    public void saveNewPost(PostRequest postRequest) {
+        Integer userid = postRequest.getUserId();
+        User user = userService.getCurrentUser();
+        List<String> hashtags = postRequest.getHashtags();
+        List<String> images = postRequest.getImages();
+        List<Photo> photos = images.stream().map(s -> PhotoServiceImpl.decodeToImage(user.hashCode(), s))
+                .collect(Collectors.toList());
+        photoService.saveNewPhotos(photos);
+        hashtagService.saveNewHashtag(hashtags);
+        Post post = new Post();
+        post.setContent(postRequest.getCaption());
+        post.setUser(user);
+        post.setComments(new ArrayList<>());
+        post.setLiked(false);
+        post.setPhotos(photos);
+        post.setLikes(new ArrayList<>());
+        post.setCreateAt(LocalDateTime.now());
+        post.setUpdateAt(LocalDateTime.now());
         postRepository.save(post);
     }
 }

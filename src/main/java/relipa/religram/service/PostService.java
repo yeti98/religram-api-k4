@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import relipa.religram.entity.Comment;
 import relipa.religram.entity.Post;
 import relipa.religram.model.CommentRequest;
+import relipa.religram.model.PostRequest;
 
 @Service
 public interface PostService {
@@ -17,4 +18,6 @@ public interface PostService {
     void changeLikeState(Integer postId);
 
     void saveNewComment(Integer postId, CommentRequest commentRequest);
+
+    void saveNewPost(PostRequest postRequest);
 }
