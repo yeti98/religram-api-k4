@@ -9,6 +9,7 @@ import relipa.religram.entity.Comment;
 import relipa.religram.entity.Post;
 import relipa.religram.model.CommentRequest;
 import relipa.religram.model.PagingResponse;
+import relipa.religram.model.PostRequest;
 import relipa.religram.service.PostService;
 import utils.Entity2DTO;
 
@@ -53,5 +54,10 @@ public class PostRESTController {
     public PostModel getPostById(@PathVariable("id") String postId) {
         Post post = postService.getPostById(Integer.valueOf(postId));
         return Entity2DTO.toPostModel(post);
+    }
+
+    @PostMapping("/post")
+    public void post(@Valid @RequestBody PostRequest postRequest) {
+        postService.saveNewPost(postRequest);
     }
 }
