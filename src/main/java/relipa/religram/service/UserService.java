@@ -30,4 +30,6 @@ public interface UserService {
 
     SignupFBResponse getSignupFBResponse(LoginFBRequest loginFBRequest);
 
+    User findById(Integer userId);
+
 }

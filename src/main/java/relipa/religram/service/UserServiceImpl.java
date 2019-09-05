@@ -21,8 +21,11 @@ import relipa.religram.entity.Photo;
 import relipa.religram.entity.User;
 import relipa.religram.exceptionhandle.ApiMissingException;
 import relipa.religram.exceptionhandle.EmailIsAlreadyTakenException;
+import relipa.religram.exceptionhandle.UserNotFoundException;
 import relipa.religram.exceptionhandle.UsernameIsAlreadyTakenException;
 import relipa.religram.model.*;
+
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -190,5 +193,14 @@ public class UserServiceImpl implements UserService {
         assert photo != null;
         response.setAvatar(photo.getPhotoUri());
         return response;
+    }
+
+    @Override
+    public User findById(Integer userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (!optionalUser.isPresent()) {
+            throw new UserNotFoundException();
+        }
+        return optionalUser.get();
     }
 }
