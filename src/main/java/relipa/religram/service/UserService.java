@@ -23,6 +23,9 @@ public interface UserService {
     public void resetPassword(String email);
 
     User getCurrentUser();
+
     public UserModel getUserById(int id);
+
+    LoginResponse updateUser(UserUpdateRequest request);
 
 }
