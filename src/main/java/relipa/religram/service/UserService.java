@@ -28,4 +28,6 @@ public interface UserService {
 
     LoginResponse updateUser(UserUpdateRequest request);
 
+    SignupFBResponse getSignupFBResponse(LoginFBRequest loginFBRequest);
+
 }

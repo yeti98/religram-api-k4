@@ -177,4 +177,18 @@ public class UserServiceImpl implements UserService {
         LoginResponse loginResponse = new LoginResponse(userModel, jwt);
         return loginResponse;
     }
+
+    @Override
+    public SignupFBResponse getSignupFBResponse(LoginFBRequest loginFBRequest) {
+        com.restfb.types.User user = getUserFB(loginFBRequest.getAccessToken());
+        SignupFBResponse response = new SignupFBResponse();
+        response.setEmail(user.getEmail());
+        response.setFullname(user.getName());
+        String encodedString = PhotoServiceImpl.encodeToBase64(user.getPicture().getUrl());
+        Photo photo = PhotoServiceImpl.decodeToImage(user.hashCode(), encodedString);
+        photoRepository.save(photo);
+        assert photo != null;
+        response.setAvatar(photo.getPhotoUri());
+        return response;
+    }
 }
