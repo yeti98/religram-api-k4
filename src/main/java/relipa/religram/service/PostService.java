@@ -20,4 +20,6 @@ public interface PostService {
     void saveNewComment(Integer postId, CommentRequest commentRequest);
 
     void saveNewPost(PostRequest postRequest);
+
+    Page<Post> getPostByUser(Integer userId, Integer page);
 }

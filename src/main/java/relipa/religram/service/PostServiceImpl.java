@@ -69,7 +69,8 @@ public class PostServiceImpl implements PostService {
     public void changeLikeState(Integer postId) {
         Post post = getPostById(postId);
         List<Like> likes = post.getLikes();
-        if (likes == null) likes = new ArrayList<>();
+        if (likes == null)
+            likes = new ArrayList<>();
         User currentUser = userService.getCurrentUser();
         boolean isCurrentUserLiked = false;
         Like temp = null;
@@ -81,12 +82,14 @@ public class PostServiceImpl implements PostService {
             }
         }
         if (!isCurrentUserLiked) {
-            if (!post.isLiked()) post.setLiked(true);
+            if (!post.isLiked())
+                post.setLiked(true);
             Like like = new Like(userService.getCurrentUser(), LocalDateTime.now());
             likes.add(like);
         } else {
             likes.remove(temp);
-            if (likes.size() == 0) post.setLiked(false);
+            if (likes.size() == 0)
+                post.setLiked(false);
             post.setLikes(likes);
         }
         postRepository.save(post);
@@ -130,5 +133,13 @@ public class PostServiceImpl implements PostService {
         post.setCreateAt(LocalDateTime.now());
         post.setUpdateAt(LocalDateTime.now());
         postRepository.save(post);
+    }
+
+    @Override
+    public Page<Post> getPostByUser(Integer userId, Integer page) {
+        User user = userService.findById(userId);
+        Pageable pageable = PageRequest.of(page, PostPerPage, Sort.by("createAt").descending());
+        Page<Post> posts = postRepository.findByUser(user, pageable);
+        return posts;
     }
 }
