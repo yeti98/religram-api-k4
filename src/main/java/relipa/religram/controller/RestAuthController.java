@@ -61,4 +61,8 @@ public class RestAuthController {
             throw new RuntimeException("Token is invalid!");
     }
 
+    @PostMapping("/signup/facebook")
+    public SignupFBResponse signupFb(@RequestBody LoginFBRequest loginFbRequest) {
+        return userService.getSignupFBResponse(loginFbRequest);
+    }
 }
