@@ -15,7 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import relipa.religram.configer.security.CustomUserDetails;
+import relipa.religram.custom_repository.PhotoRepository;
 import relipa.religram.custom_repository.UserRepository;
+import relipa.religram.entity.Photo;
 import relipa.religram.entity.User;
 import relipa.religram.exceptionhandle.ApiMissingException;
 import relipa.religram.exceptionhandle.EmailIsAlreadyTakenException;
@@ -44,6 +46,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    private PhotoRepository photoRepository;
 
     @Override
     public LoginResponse getSignupResponse(SignupRequest signupRequest) {
@@ -153,5 +158,23 @@ public class UserServiceImpl implements UserService {
         if (user == null)
             throw new RuntimeException("User not found");
         return new UserModel(user.getId(), user.getUsername(), user.getFullname(), user.getEmail(), user.getAvatar());
+    }
+
+    @Override
+    public LoginResponse updateUser(UserUpdateRequest request) {
+        CustomUserDetails customUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        User user = customUser.getUser();
+        user.setUsername(request.getUsername());
+        user.setFullname(request.getFullname());
+        Photo photo = PhotoServiceImpl.decodeToImage(user.hashCode(), request.getAvatar());
+        photoRepository.save(photo);
+        user.setAvatar(photo.getPhotoUri());
+        userRepository.save(user);
+        String jwt = jwtService.generateToken(new CustomUserDetails(user));
+        UserModel userModel = new UserModel(user.getId(), user.getFullname(), user.getEmail(), user.getUsername(),
+                user.getAvatar());
+        LoginResponse loginResponse = new LoginResponse(userModel, jwt);
+        return loginResponse;
     }
 }

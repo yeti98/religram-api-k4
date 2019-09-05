@@ -60,4 +60,5 @@ public class RestAuthController {
         else
             throw new RuntimeException("Token is invalid!");
     }
+
 }
